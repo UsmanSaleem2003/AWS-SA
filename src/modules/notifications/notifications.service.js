@@ -1,6 +1,6 @@
 import { NotificationStatus } from './notification-status.js';
 import { getNotificationProvider } from './providers/notification-provider-registry.js';
-import { findNotificationById, saveNotification } from './notifications.repository.js';
+import { findNotificationById, saveNotification } from './notifications.db.js';
 import { HttpError } from '../../shared/http/http-error.js';
 
 export async function createNotification(payload) {
