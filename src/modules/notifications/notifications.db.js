@@ -39,3 +39,15 @@ export async function findNotificationById(id) {
 
   return mapNotificationRow(result.rows[0]);
 }
+
+export async function updateNotificationStatus(id, status) {
+  const result = await pool.query(
+    `UPDATE notifications
+     SET status = $2, updated_at = NOW()
+     WHERE id = $1
+     RETURNING id, channel, status, payload, retry_count, last_error, created_at, updated_at`,
+    [id, status]
+  );
+
+  return mapNotificationRow(result.rows[0]);
+}
