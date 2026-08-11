@@ -10,11 +10,12 @@ The current increment creates the Express API foundation and persists accepted n
 - `POST /notifications` for accepting email or Slack notification requests.
 - `GET /notifications/:id` for reading the stored notification state.
 - PostgreSQL storage for notification metadata and flexible channel payloads.
+- Queue publishing through local log mode or AWS SQS.
 - Structured JSON logging with Pino.
 - Request validation with Zod.
 - Strategy-style notification provider registry so more channels can be added later without changing the API route.
 
-The API accepts, validates, and stores requests right now. SQS publishing, Lambda processing, retries, DLQ handling, Prometheus, and Grafana will be added incrementally.
+The API accepts, validates, stores, and queues requests right now. Lambda processing, retries, DLQ handling, Prometheus, and Grafana will be added incrementally.
 
 ## Run Locally
 
@@ -23,6 +24,26 @@ npm install
 docker compose up -d
 npm run db:migrate
 npm run dev
+```
+
+Use local queue logging while learning the flow:
+
+```env
+QUEUE_PROVIDER=log
+```
+
+Use real AWS SQS when your AWS credentials are configured:
+
+```env
+QUEUE_PROVIDER=sqs
+AWS_REGION=us-east-1
+SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/526167571294/notification-requests
+```
+
+Check SQS access:
+
+```bash
+npm run sqs:check
 ```
 
 ```bash
@@ -70,7 +91,7 @@ Client -> API -> PostgreSQL -> SQS -> Lambda Worker -> Provider -> Status Update
 
 ## Next Recommended Step
 
-Add SQS publishing after the database write. This moves the system from “accepted and stored” to “accepted, stored, and queued for asynchronous processing.”
+Add the Lambda worker that consumes SQS messages. This moves the system from “accepted, stored, and queued” to true asynchronous processing.
 
 ## Database Choice
 

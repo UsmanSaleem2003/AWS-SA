@@ -1,3 +1,4 @@
 export const NotificationStatus = Object.freeze({
-  RECEIVED: 'received'
+  RECEIVED: 'received',
+  QUEUED: 'queued'
 });
